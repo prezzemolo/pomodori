@@ -1,4 +1,4 @@
 pomodori
 ==========
 
-an api server written by php for learning.
+an api server for my php learning.
