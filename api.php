@@ -10,8 +10,7 @@ class api
 
     private function default_header() {
         header("Content-Type: application/json");
-        header("Server: pomodori api ".$version);
-        header("X-Powered-By: MIT License");
+        header("X-Powered-By: pomodori api ".$version);
     }
 
     public function epoch() {
