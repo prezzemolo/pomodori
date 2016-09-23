@@ -29,7 +29,7 @@ class Router
                 break;
 
             case $this->url === "/meta":
-                $this-parsed = "meta";
+                $this->parsed = "meta";
                 break;
 
             default:
