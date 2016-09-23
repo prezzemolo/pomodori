@@ -10,7 +10,7 @@ class api
 
     private function default_header() {
         header("Content-Type: application/json");
-        header("X-Powered-By: pomodori api ".$version);
+        header("X-Powered-By: pomodori api ".$this::version);
     }
 
     public function epoch() {
@@ -57,7 +57,7 @@ class api
         $this->default_header();
         $this->sender = array(
             "status" => 200,
-            "version" => $this->version
+            "version" => $this::version
         );
         echo json_encode($this->sender);
     }
