@@ -68,7 +68,7 @@ class api
         $this->default_header();
         $this->sender = array(
             "status" => 200,
-            "message" => "This is pomodori api server."
+            "description" => "This is pomodori api server."
         );
         echo json_encode($this->sender);
     }
