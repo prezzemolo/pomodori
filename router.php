@@ -16,6 +16,10 @@ class Router
      */
     public function parseUrl() {
         switch (true) {
+            case $this->url === "/":
+                $this->parsed = "index";
+                break;
+
             case $this->url === "/time/epoch":
                 $this->parsed = "epoch";
                 break;

@@ -48,7 +48,7 @@ class api
         header("HTTP/1.1 404 Not Found");
         $this->sender = array(
             "status" => 404,
-            "error" => "not found."
+            "description" => "not found."
         );
         echo json_encode($this->sender);
     }
@@ -57,7 +57,18 @@ class api
         $this->default_header();
         $this->sender = array(
             "status" => 200,
-            "version" => $this::version
+            "version" => $this::version,
+            "description" => ":tomato: an api server for my php learning.",
+            "github" => "https://github.com/prezzemolo/pomodori"
+        );
+        echo json_encode($this->sender);
+    }
+
+    public function index() {
+        $this->default_header();
+        $this->sender = array(
+            "status" => 200,
+            "message" => "This is pomodori api server."
         );
         echo json_encode($this->sender);
     }
