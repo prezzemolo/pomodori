@@ -28,6 +28,10 @@ class Router
                 $this->parsed = "remote";
                 break;
 
+            case $this->url === "/meta":
+                $this-parsed = "meta";
+                break;
+
             default:
                 $this->parsed = "notfound";
         }
