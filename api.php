@@ -5,7 +5,9 @@ class api
     private $iso8601;
     private $remote;
     private $sender;
-    
+
+    const version = 'v0.01';
+
     public function epoch() {
         $this->epoch = time();
         $this->sender = array(
@@ -31,7 +33,7 @@ class api
     }
 
     public function notfound() {
-        header("HTTP/1.0 404 Not Found");
+        header("HTTP/1.1 404 Not Found");
         $this->sender = array(
             "error" => "not found."
         );
