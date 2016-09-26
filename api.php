@@ -1,7 +1,7 @@
 <?
 class api
 {
-    const version = 'v0.01';
+    const version = 'v0.02';
 
     private function default_header() {
         header("Content-Type: application/json");
