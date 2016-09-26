@@ -16,7 +16,7 @@ class Router
      */
     public function parseUrl() {
         switch (true) {
-            case $this->url === "" || $this->url === "/":
+            case $this->url === "":
                 $this->parsed = "index";
                 break;
 
