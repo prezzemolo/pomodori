@@ -1,11 +1,6 @@
 <?
 class api
 {
-    private $epoch;
-    private $iso8601;
-    private $remote;
-    private $sender;
-
     const version = 'v0.01';
 
     private function default_header() {
@@ -15,62 +10,60 @@ class api
 
     public function epoch() {
         $this->default_header();
-        $this->epoch = time();
-        $this->sender = array(
-            "status" => 200,
-            "epoch" => $this->epoch
+        $sender = array(
+            "status" => http_response_code(),
+            "epoch" => time()
         );
-        echo json_encode($this->sender);
+        echo json_encode($sender);
     }
 
     public function iso8601() {
         $this->default_header();
-        $this->iso8601 = date(DATE_ATOM);
-        $this->sender = array(
-            "status" => 200,
-            "iso8601" => $this->iso8601
+        $sender = array(
+            "status" => http_response_code(),
+            "iso8601" => date(DATE_ATOM)
         );
-        echo json_encode($this->sender);
+        echo json_encode($sender);
     }
 
     public function remote() {
         $this->default_header();
-        $this->remote = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
-        $this->sender = array(
-            "status" => 200,
-            "remote" => $this->remote
+        $sender = array(
+            "status" => http_response_code(),
+            "remote" => isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
         );
-        echo json_encode($this->sender);
+        echo json_encode($sender);
     }
 
     public function notfound() {
         $this->default_header();
-        header("HTTP/1.1 404 Not Found");
-        $this->sender = array(
-            "status" => 404,
+        http_response_code(404);
+        $sender = array(
+            "status" => http_response_code(),
             "description" => "not found."
         );
-        echo json_encode($this->sender);
+        echo json_encode($sender);
     }
 
     public function meta() {
         $this->default_header();
-        $this->sender = array(
-            "status" => 200,
+        $sender = array(
+            "status" => http_response_code(),
             "version" => $this::version,
             "description" => ":tomato: an api server for my php learning.",
             "github" => "https://github.com/prezzemolo/pomodori"
         );
-        echo json_encode($this->sender);
+        echo json_encode($sender);
     }
 
     public function index() {
         $this->default_header();
-        $this->sender = array(
-            "status" => 200,
+        $sender = array(
+            "status" => http_response_code(),
             "description" => "This is pomodori api server."
         );
-        echo json_encode($this->sender);
+        echo json_encode($sender);
+
     }
 }
 ?>
