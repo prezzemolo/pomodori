@@ -63,7 +63,6 @@ class api
             "description" => "This is pomodori api server."
         );
         echo json_encode($sender);
-
     }
 }
 ?>
