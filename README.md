@@ -11,7 +11,7 @@ Setup
 RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ index.php?__PATH_INFO__=$1 [L,QSA]
+RewriteRule ^(.*)$ /index.php [L,QSA]
 ```
 
 LICENSE
