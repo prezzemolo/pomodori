@@ -44,7 +44,7 @@ class api
         http_response_code(404);
         echo json_encode(array(
             'code' => http_response_code(),
-            'detail' => 'content not found.'
+            'detail' => 'content is not found.'
         ));
         return;
     }
@@ -70,6 +70,7 @@ class api
     }
 
     public function nicovideoInfo($videoId = null) {
+        $info = new nicovideo\info();
         $this->default_header();
         if (!isset($videoId)){
             http_response_code(400);
@@ -87,10 +88,9 @@ class api
             ));
             return;
         }
-        echo json_encode(array(
-            'code' => http_response_code(),
-            'videoId' => $videoId
-        ));
+        $videoInfo = $info->getData($videoId);
+        http_response_code($videoInfo['code']);
+        echo json_encode($videoInfo);
         return;
     }
 }
