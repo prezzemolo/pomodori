@@ -25,28 +25,28 @@ class router
 
         if ($this->method === 'GET') {
             switch (true) {
-                case $this->url === "":
-                    $route = "index";
+                case $this->url === '':
+                    $route = 'index';
                     break;
 
-                case $this->url === "/time/epoch":
-                    $route = "epoch";
+                case $this->url === '/time/epoch':
+                    $route = 'epoch';
                     break;
 
-                case $this->url === "/time/iso8601":
-                    $route = "iso8601";
+                case $this->url === '/time/iso8601':
+                    $route = 'iso8601';
                     break;
 
-                case $this->url === "/ip/remote":
-                    $route = "remote";
+                case $this->url === '/ip/remote':
+                    $route = 'remote';
                     break;
 
-                case $this->url === "/meta":
-                    $route = "meta";
+                case $this->url === '/meta':
+                    $route = 'meta';
                     break;
 
-                case $this->url === "/nicovideo/info":
-                    $route = "nicovideoInfo";
+                case $this->url === '/nicovideo/info':
+                    $route = 'nicovideoInfo';
                     $param = isset($this->param['videoId'])
                         ? $this->param['videoId']
                         : null;
