@@ -73,18 +73,24 @@ class api
         $this->default_header();
         if (!isset($videoId)){
             http_response_code(400);
-            $sender = array(
+            echo json_encode(array(
                 'code' => http_response_code(),
                 'detail' => 'please set GET videoId parameter.'
-            );
-            echo json_encode($sender);
+            ));
             return;
         }
-        $sender = array(
+        if (!preg_match('/^(sm|so|nm)*([0-9]+)/', $videoId)){
+            http_response_code(400);
+            echo json_encode(array(
+                'code' => http_response_code(),
+                'detail' => 'please set valid nicovideo\'s videoId.'
+            ));
+            return;
+        }
+        echo json_encode(array(
             'code' => http_response_code(),
             'videoId' => $videoId
-        );
-        echo json_encode($sender);
+        ));
         return;
     }
 }
