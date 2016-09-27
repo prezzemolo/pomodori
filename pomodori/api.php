@@ -4,7 +4,7 @@ require_once __DIR__.'/nicovideo.php';
 
 class api
 {
-    const version = 'v0.03';
+    const version = 'v0.04';
 
     private function default_header() {
         header('Content-Type: application/json');
