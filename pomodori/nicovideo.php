@@ -6,6 +6,9 @@ class info
     public function getDataFromAPI($videoId) {
         // default
         $category = null;
+        $userNickname = null;
+        $userImage = null;
+        $userSecret = true;
 
         // retrive api data
         $thumbRaw = file_get_contents('http://ext.nicovideo.jp/api/getthumbinfo/' . $videoId);
@@ -32,10 +35,20 @@ class info
 
         if ($infoStatus === 'ok') {
             $deleted = (string) $infoFormatted->nicovideo_video_response->video->deleted === '1' ? true : false;
+            $userId = (int) $infoFormatted->nicovideo_video_response->video->user_id;
+            $userRaw = file_get_contents('http://api.ce.nicovideo.jp/api/v1/user.info?__format=json&user_id=' . $userId);
+            $userFormatted = json_decode($userRaw);
+            if ($userFormatted->nicovideo_user_response->{'@status'} === 'ok') {
+                $userNickname = (string) $userFormatted->nicovideo_user_response->user->nickname;
+                $userImage = (string) $userFormatted->nicovideo_user_response->user->thumbnail_url;
+                $userSecret = (string) $userFormatted->nicovideo_user_response->user->thumbnail_url === '1' ? true : false;
+            }
             $comment = (int) $infoFormatted->nicovideo_video_response->thread->num_res;
             $description = (string) $infoFormatted->nicovideo_video_response->video->description === '&nbsp;'
 				? null
-				: (string) $infoFormatted->nicovideo_video_response->video->description === '　'
+				: (string) $infoFormatted->nicovideo_video_response->video->description === 'ㅤ'
+				? null
+				: (string) $infoFormatted->nicovideo_video_response->video->description === ''
 				? null
                 : (string) $infoFormatted->nicovideo_video_response->video->description;
             $image = $deleted === true
@@ -46,8 +59,16 @@ class info
             $title = (string) $infoFormatted->nicovideo_video_response->video->title;
             $myList = (int) $infoFormatted->nicovideo_video_response->video->mylist_counter;
             $view = (int) $infoFormatted->nicovideo_video_response->video->view_counter;
+            $rawSeconds = (int) $infoFormatted->nicovideo_video_response->video->length_in_seconds;
+            $rawMinutes = (int) intval($rawSeconds / 60);
+            $hours = (int) intval($rawMinutes / 60);
+            $minutes = (int) $rawMinutes % 60;
+            $seconds = (int) $rawSeconds % 60;
+            $time = $hours > 0
+                ? "$hours:$minutes:$seconds"
+                : "$minutes:$seconds";
             if ($thumbStatus === 'ok' && isset($thumbFormatted->thumb->tags->tag->attributes()->category)) {
-                $category = (string) $thumbFormatted->thumb->tags->tag[(int)$thumbFormatted->thumb->tags->tag->attributes()->category];
+                $category = (string)$thumbFormatted->thumb->tags->tag[(int)$thumbFormatted->thumb->tags->tag->attributes()->category - 1];
             }
             return array(
                 "code" => 200,
@@ -55,9 +76,17 @@ class info
                 "category" => $category,
                 "comment" => $comment,
                 "description" => $description,
+                "hours" => $hours,
                 "image" => $image,
+                "time" => $time,
                 "title" => $title,
+                "minutes" => $minutes,
                 "myList" => $myList,
+                "seconds" => $seconds,
+                "userNickname" => $userNickname,
+                "userId" => $userId,
+                "userImage" => $userImage,
+                "userSecret" => $userSecret,
                 "view" => $view
             );
         }
