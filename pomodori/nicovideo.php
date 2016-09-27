@@ -44,13 +44,12 @@ class info
                 $userSecret = (string) $userFormatted->nicovideo_user_response->user->thumbnail_url === '1' ? true : false;
             }
             $comment = (int) $infoFormatted->nicovideo_video_response->thread->num_res;
-            $description = (string) $infoFormatted->nicovideo_video_response->video->description === '&nbsp;'
+            $rawDescription = mb_convert_kana((string) $infoFormatted->nicovideo_video_response->video->description, 'as', 'UTF-8');
+            $description = $rawDescription === '&nbsp;'
 				? null
-				: (string) $infoFormatted->nicovideo_video_response->video->description === 'ㅤ'
+				: $rawDescription === ''
 				? null
-				: (string) $infoFormatted->nicovideo_video_response->video->description === ''
-				? null
-                : (string) $infoFormatted->nicovideo_video_response->video->description;
+                : $rawDescription;
             $image = $deleted === true
 				? 'http://res.nimg.jp/img/common/video_deleted.jpg'
 				: (string) $infoFormatted->nicovideo_video_response->video->options->{'@large_thumbnail'} === '1'
