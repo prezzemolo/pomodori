@@ -1,5 +1,6 @@
 <?
 namespace pomodori;
+require_once __DIR__.'/nicovideo.php';
 
 class api
 {
@@ -65,6 +66,19 @@ class api
             "detail" => "This is pomodori api server."
         );
         echo json_encode($sender);
+    }
+
+    public function nicovideoInfo($videoId) {
+        $this->default_header();
+/**
+ *      $info = new pomodori\nicovideo\info;
+ *      $sender = $info->getData($videoId);
+ *      echo json_encode($sender);
+ */
+        echo json_encode(array(
+            "code" => http_response_code(),
+            "videoId" => $videoId
+        ));
     }
 }
 ?>

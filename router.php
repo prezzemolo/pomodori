@@ -1,46 +1,60 @@
 <?php
 namespace pomodori;
 
-class Router
+class router
 {
     private $url;
+    private $method = null;
+    private $param = null;
 
     /**
      * setParseUrl
      */
-    public function setUrl($url) {
-        $this->url = rtrim($url, '/');
+    public function setParam($param) {
+        list($this->url, $this->method, $this->param) = array(rtrim($param['url'], '/'), $param['method'], $param['param']);
     }
 
     /**
      * Parse URL
      */
     public function parseUrl() {
-        switch (true) {
-            case $this->url === "":
-                $parsed = "index";
-                break;
+        $route = 'notfound';
+        $param = null;
+        if ($this->method !== 'GET')
+            return array($route, $param);
 
-            case $this->url === "/time/epoch":
-                $parsed = "epoch";
-                break;
+        if ($this->method === 'GET') {
+            switch (true) {
+                case $this->url === "":
+                    $route = "index";
+                    break;
 
-            case $this->url === "/time/iso8601":
-                $parsed = "iso8601";
-                break;
+                case $this->url === "/time/epoch":
+                    $route = "epoch";
+                    break;
 
-            case $this->url === "/ip/remote":
-                $parsed = "remote";
-                break;
+                case $this->url === "/time/iso8601":
+                    $route = "iso8601";
+                    break;
 
-            case $this->url === "/meta":
-                $parsed = "meta";
-                break;
+                case $this->url === "/ip/remote":
+                    $route = "remote";
+                    break;
 
-            default:
-                $this->parsed = "notfound";
+                case $this->url === "/meta":
+                    $route = "meta";
+                    break;
+
+                case $this->url === "/nicovideo/info":
+                    $route = "nicovideoInfo";
+                    $param = isset($this->param['videoId'])
+                        ? $this->param['videoId']
+                        : null;
+                    break;
+            }
         }
-        return $parsed;
+
+        return array($route, $param);
     }
 }
 ?>
