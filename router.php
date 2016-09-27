@@ -4,7 +4,6 @@ namespace pomodori;
 class Router
 {
     private $url;
-    private $parsed;
 
     /**
      * setParseUrl
@@ -19,29 +18,29 @@ class Router
     public function parseUrl() {
         switch (true) {
             case $this->url === "":
-                $this->parsed = "index";
+                $parsed = "index";
                 break;
 
             case $this->url === "/time/epoch":
-                $this->parsed = "epoch";
+                $parsed = "epoch";
                 break;
 
             case $this->url === "/time/iso8601":
-                $this->parsed = "iso8601";
+                $parsed = "iso8601";
                 break;
 
             case $this->url === "/ip/remote":
-                $this->parsed = "remote";
+                $parsed = "remote";
                 break;
 
             case $this->url === "/meta":
-                $this->parsed = "meta";
+                $parsed = "meta";
                 break;
 
             default:
                 $this->parsed = "notfound";
         }
-        return $this->parsed;
+        return $parsed;
     }
 }
 ?>
