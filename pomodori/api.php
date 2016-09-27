@@ -79,7 +79,7 @@ class api
             ));
             return;
         }
-        if (!preg_match('/^(sm|so|nm)*([0-9]+)/', $videoId)){
+        if (!preg_match('/^(sm|so|nm| )([0-9]+)/', $videoId)){
             http_response_code(400);
             echo json_encode(array(
                 'code' => http_response_code(),
