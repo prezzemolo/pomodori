@@ -1,4 +1,6 @@
 <?
+namespace pomodori;
+
 class api
 {
     const version = 'v0.03';

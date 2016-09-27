@@ -1,4 +1,6 @@
 <?php
+namespace pomodori;
+
 class Router
 {
     private $url;
