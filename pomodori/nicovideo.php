@@ -46,14 +46,14 @@ class info
             $comment = (int) $infoFormatted->nicovideo_video_response->thread->num_res;
             $rawDescription = mb_convert_kana((string) $infoFormatted->nicovideo_video_response->video->description, 'as', 'UTF-8');
             $description = $rawDescription === '&nbsp;'
-				? null
-				: $rawDescription === ''
-				? null
+                ? null
+                : $rawDescription === ''
+                ? null
                 : $rawDescription;
             $image = $deleted === true
-				? 'http://res.nimg.jp/img/common/video_deleted.jpg'
-				: (string) $infoFormatted->nicovideo_video_response->video->options->{'@large_thumbnail'} === '1'
-				? (string) $infoFormatted->nicovideo_video_response->video->thumbnail_url . '.L'
+                ? 'http://res.nimg.jp/img/common/video_deleted.jpg'
+                : (string) $infoFormatted->nicovideo_video_response->video->options->{'@large_thumbnail'} === '1'
+                ? (string) $infoFormatted->nicovideo_video_response->video->thumbnail_url . '.L'
                 : (string) $infoFormatted->nicovideo_video_response->video->thumbnail_url;
             $title = (string) $infoFormatted->nicovideo_video_response->video->title;
             $myList = (int) $infoFormatted->nicovideo_video_response->video->mylist_counter;
