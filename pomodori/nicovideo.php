@@ -64,8 +64,8 @@ class info
             $minutes = (int) $rawMinutes % 60;
             $seconds = (int) $rawSeconds % 60;
             $time = $hours > 0
-                ? "$hours:$minutes:$seconds"
-                : "$minutes:$seconds";
+                ? sprintf("%d:%02d:%02d", $hours, $minutes, $seconds)
+                : sprintf("%d:%02d", $minutes, $seconds);
             if ($thumbStatus === 'ok' && isset($thumbFormatted->thumb->tags->tag->attributes()->category)) {
                 $category = (string)$thumbFormatted->thumb->tags->tag[(int)$thumbFormatted->thumb->tags->tag->attributes()->category - 1];
             }
