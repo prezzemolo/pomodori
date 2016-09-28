@@ -69,6 +69,7 @@ class info
             if ($thumbStatus === 'ok' && isset($thumbFormatted->thumb->tags->tag->attributes()->category)) {
                 $category = (string)$thumbFormatted->thumb->tags->tag[(int)$thumbFormatted->thumb->tags->tag->attributes()->category - 1];
             }
+            $reported = (string) $infoFormatted->nicovideo_video_response->video->options->{'@mobile'} === '1' ? true : false;
             return array(
                 "code" => 200,
                 "deleted" => $deleted,
@@ -81,6 +82,7 @@ class info
                 "title" => $title,
                 "minutes" => $minutes,
                 "myList" => $myList,
+                "reported" => $reported,
                 "seconds" => $seconds,
                 "userNickname" => $userNickname,
                 "userId" => $userId,
