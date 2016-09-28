@@ -70,7 +70,7 @@ class info
                 $category = (string)$thumbFormatted->thumb->tags->tag[(int)$thumbFormatted->thumb->tags->tag->attributes()->category - 1];
             }
             $reported = (string) $infoFormatted->nicovideo_video_response->video->options->{'@mobile'} === '1' ? true : false;
-            $uploadTime = (string) $infoFormatted->nicovideo_video_response->video->first_retrieve;
+            $uploaded = (string) $infoFormatted->nicovideo_video_response->video->first_retrieve;
             return array(
                 "code" => 200,
                 "deleted" => $deleted,
@@ -86,7 +86,7 @@ class info
                 "reported" => $reported,
                 "seconds" => $seconds,
                 "userNickname" => $userNickname,
-                "uploadTime" => $uploadTime,
+                "uploaded" => $uploaded,
                 "userId" => $userId,
                 "userImage" => $userImage,
                 "userSecret" => $userSecret,
