@@ -41,7 +41,7 @@ class info
             if ($userFormatted->nicovideo_user_response->{'@status'} === 'ok') {
                 $userNickname = (string) $userFormatted->nicovideo_user_response->user->nickname;
                 $userImage = (string) $userFormatted->nicovideo_user_response->user->thumbnail_url;
-                $userSecret = (string) $userFormatted->nicovideo_user_response->user->thumbnail_url === '1' ? true : false;
+                $userSecret = (string) $userFormatted->nicovideo_user_response->vita_option->user_secret === '1' ? true : false;
             }
             $comment = (int) $infoFormatted->nicovideo_video_response->thread->num_res;
             $rawDescription = mb_convert_kana((string) $infoFormatted->nicovideo_video_response->video->description, 'as', 'UTF-8');
