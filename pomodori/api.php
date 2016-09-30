@@ -95,6 +95,7 @@ class api
     }
 
     public function base64Decode($param = null) {
+        $this->default_header();
         if (!isset($param['string'])){
             http_response_code(400);
             echo json_encode(array(
@@ -105,6 +106,7 @@ class api
     }
 
     public function base64Encode($param = null) {
+        $this->default_header();
         if (!isset($param['string'])){
             http_response_code(400);
             echo json_encode(array(
@@ -115,6 +117,7 @@ class api
     }
 
     public function invaildMethod() {
+        $this->default_header();
         http_response_code(400);
         echo json_encode(array(
             'code' => http_response_code(),
