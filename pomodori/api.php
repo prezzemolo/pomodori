@@ -69,10 +69,10 @@ class api
         return;
     }
 
-    public function nicovideoInfo($videoId = null) {
+    public function nicovideoInfo($param = null) {
         $info = new nicovideo\info();
         $this->default_header();
-        if (!isset($videoId)){
+        if (!isset($param['videoId'])){
             http_response_code(400);
             echo json_encode(array(
                 'code' => http_response_code(),
@@ -80,7 +80,7 @@ class api
             ));
             return;
         }
-        if (!preg_match('/^(sm|so|nm|)([0-9]+)$/', $videoId)){
+        if (!preg_match('/^(sm|so|nm|)([0-9]+)$/', $param['videoId'])){
             http_response_code(400);
             echo json_encode(array(
                 'code' => http_response_code(),
@@ -88,14 +88,14 @@ class api
             ));
             return;
         }
-        $videoInfo = $info->getData($videoId);
+        $videoInfo = $info->getData($param['videoId']);
         http_response_code($videoInfo['code']);
         echo json_encode($videoInfo);
         return;
     }
 
-    public function base64Decode($base = null) {
-        if (!isset($base)){
+    public function base64Decode($param = null) {
+        if (!isset($param['string'])){
             http_response_code(400);
             echo json_encode(array(
                 'code' => http_response_code(),
@@ -104,14 +104,22 @@ class api
         }
     }
 
-    public function base64Encode($base = null) {
-        if (!isset($base)){
+    public function base64Encode($param = null) {
+        if (!isset($param['string'])){
             http_response_code(400);
             echo json_encode(array(
                 'code' => http_response_code(),
                 'detail' => 'please set POST string parameter.'
             ));
         }
+    }
+
+    public function invaildMethod() {
+        http_response_code(400);
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'detail' => 'please use vaild HTTTP method.'
+        ));
     }
 }
 ?>
