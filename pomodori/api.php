@@ -93,5 +93,25 @@ class api
         echo json_encode($videoInfo);
         return;
     }
+
+    public function base64Decode($base = null) {
+        if (!isset($base)){
+            http_response_code(400);
+            echo json_encode(array(
+                'code' => http_response_code(),
+                'detail' => 'please set POST string parameter.'
+            ));
+        }
+    }
+
+    public function base64Encode($base = null) {
+        if (!isset($base)){
+            http_response_code(400);
+            echo json_encode(array(
+                'code' => http_response_code(),
+                'detail' => 'please set POST string parameter.'
+            ));
+        }
+    }
 }
 ?>

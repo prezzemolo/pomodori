@@ -20,8 +20,23 @@ class router
     public function parseUrl() {
         $route = 'notfound';
         $param = null;
-        if ($this->method !== 'GET')
-            return array($route, $param);
+        if ($this->method === 'POST') {
+            switch (true) {
+                case $this->url === '/base64/decode':
+                    $route = 'base64Decode';
+                    $param = isset($this->param['string'])
+                        ? $this->param['string']
+                        : null;
+                    break;
+
+                case $this->url === '/base64/encode':
+                    $route = 'base64Encode';
+                    $param = isset($this->param['string'])
+                        ? $this->param['string']
+                        : null;
+                    break;
+            }
+        }
 
         if ($this->method === 'GET') {
             switch (true) {
