@@ -18,12 +18,6 @@ class router
      * Parse URL
      */
     public function parseUrl() {
-        $route = 'notfound';
-        $method = null;
-        $element = null;
-        $material = null;
-        $param = null;
-
         /**
          * specific route
          */
@@ -70,6 +64,9 @@ class router
                 $element = array('string');
                 $method = 'POST';
                 break;
+
+            default:
+                return array('notfound', null);
         }
 
         /**
@@ -95,7 +92,7 @@ class router
         /**
          * return result
          */
-        return array($route, $param);
+        return array($route, isset($param) ? $param : null);
     }
 }
 ?>
