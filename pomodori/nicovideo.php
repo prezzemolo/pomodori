@@ -3,26 +3,26 @@ namespace pomodori\nicovideo;
 
 class info
 {
-    public function getDataFromAPI($videoId) {
+    public function get_from_api($id) {
         // default
         $category = null;
-        $userNickname = null;
-        $userImage = null;
-        $userSecret = true;
+        $user_nickname = null;
+        $user_image = null;
+        $user_secret = true;
 
         // retrive api data
-        $thumbRaw = file_get_contents('http://ext.nicovideo.jp/api/getthumbinfo/' . $videoId);
-        $infoRaw = file_get_contents('http://api.ce.nicovideo.jp/nicoapi/v1/video.info?__format=json&v=' . $videoId);
-        $thumbFormatted = simplexml_load_string($thumbRaw);
-        $infoFormatted = json_decode($infoRaw);
-        $thumbStatus = (string)$thumbFormatted->attributes()->status;
-        $infoStatus = $infoFormatted->nicovideo_video_response->{'@status'};
+        $thumb_raw = file_get_contents('http://ext.nicovideo.jp/api/getthumbinfo/' . $id);
+        $info_raw = file_get_contents('http://api.ce.nicovideo.jp/nicoapi/v1/video.info?__format=json&v=' . $id);
+        $thumb_formatted = simplexml_load_string($thumb_raw);
+        $info_formatted = json_decode($info_raw);
+        $thumb_status = (string)$thumb_formatted->attributes()->status;
+        $info_status = $info_formatted->nicovideo_video_response->{'@status'};
 
         // error check
-        if ($thumbStatus === 'fail' && $infoStatus === 'fail') {
-            $thumbErrorCode = (string)$thumbFormatted->error->code;
-            $infoErrorCode = $infoFormatted->nicovideo_video_response->error->code;
-            if ($thumbErrorCode === 'NOT_FOUND' && $infoErrorCode === 'NOT_FOUND')
+        if ($thumb_status === 'fail' && $info_status === 'fail') {
+            $thumb_error = (string)$thumb_formatted->error->code;
+            $info_error = $info_formatted->nicovideo_video_response->error->code;
+            if ($thumb_error === 'NOT_FOUND' && $info_error === 'NOT_FOUND')
                 return array(
                     "code" => 404,
                     "detail" => 'video is not found.'
@@ -33,63 +33,63 @@ class info
             );
         }
 
-        if ($infoStatus === 'ok') {
-            $deleted = (string) $infoFormatted->nicovideo_video_response->video->deleted === '1' ? true : false;
-            $userId = (int) $infoFormatted->nicovideo_video_response->video->user_id;
-            $userRaw = file_get_contents('http://api.ce.nicovideo.jp/api/v1/user.info?__format=json&user_id=' . $userId);
-            $userFormatted = json_decode($userRaw);
-            if ($userFormatted->nicovideo_user_response->{'@status'} === 'ok') {
-                $userNickname = (string) $userFormatted->nicovideo_user_response->user->nickname;
-                $userImage = (string) $userFormatted->nicovideo_user_response->user->thumbnail_url;
-                $userSecret = (string) $userFormatted->nicovideo_user_response->vita_option->user_secret === '1' ? true : false;
+        if ($info_status === 'ok') {
+            $deleted = (string) $info_formatted->nicovideo_video_response->video->deleted === '1' ? true : false;
+            $user_id = (int) $info_formatted->nicovideo_video_response->video->user_id;
+            $user_raw = file_get_contents('http://api.ce.nicovideo.jp/api/v1/user.info?__format=json&user_id=' . $user_id);
+            $user_formatted = json_decode($user_raw);
+            if ($user_formatted->nicovideo_user_response->{'@status'} === 'ok') {
+                $user_nickname = (string) $user_formatted->nicovideo_user_response->user->nickname;
+                $user_image = (string) $user_formatted->nicovideo_user_response->user->thumbnail_url;
+                $user_secret = (string) $user_formatted->nicovideo_user_response->vita_option->user_secret === '1' ? true : false;
             }
-            $comment = (int) $infoFormatted->nicovideo_video_response->thread->num_res;
-            $rawDescription = mb_convert_kana((string) $infoFormatted->nicovideo_video_response->video->description, 'as', 'UTF-8');
-            $description = $rawDescription === '&nbsp;'
+            $comment = (int) $info_formatted->nicovideo_video_response->thread->num_res;
+            $raw_description = mb_convert_kana((string) $info_formatted->nicovideo_video_response->video->description, 'as', 'UTF-8');
+            $description = $raw_description === '&nbsp;'
                 ? null
-                : $rawDescription === ''
+                : $raw_description === ''
                 ? null
-                : $rawDescription;
+                : $raw_description;
             $image = $deleted === true
                 ? 'http://res.nimg.jp/img/common/video_deleted.jpg'
-                : (string) $infoFormatted->nicovideo_video_response->video->options->{'@large_thumbnail'} === '1'
-                ? (string) $infoFormatted->nicovideo_video_response->video->thumbnail_url . '.L'
-                : (string) $infoFormatted->nicovideo_video_response->video->thumbnail_url;
-            $title = (string) $infoFormatted->nicovideo_video_response->video->title;
-            $myList = (int) $infoFormatted->nicovideo_video_response->video->mylist_counter;
-            $view = (int) $infoFormatted->nicovideo_video_response->video->view_counter;
-            $rawSeconds = (int) $infoFormatted->nicovideo_video_response->video->length_in_seconds;
-            $rawMinutes = (int) intval($rawSeconds / 60);
-            $hours = (int) intval($rawMinutes / 60);
-            $minutes = (int) $rawMinutes % 60;
-            $seconds = (int) $rawSeconds % 60;
+                : (string) $info_formatted->nicovideo_video_response->video->options->{'@large_thumbnail'} === '1'
+                ? (string) $info_formatted->nicovideo_video_response->video->thumbnail_url . '.L'
+                : (string) $info_formatted->nicovideo_video_response->video->thumbnail_url;
+            $title = (string) $info_formatted->nicovideo_video_response->video->title;
+            $my_list = (int) $info_formatted->nicovideo_video_response->video->mylist_counter;
+            $view = (int) $info_formatted->nicovideo_video_response->video->view_counter;
+            $raw_seconds = (int) $info_formatted->nicovideo_video_response->video->length_in_seconds;
+            $raw_minutes = (int) intval($raw_seconds / 60);
+            $time_hours = (int) intval($raw_minutes / 60);
+            $time_minutes = (int) $raw_minutes % 60;
+            $time_seconds = (int) $raw_seconds % 60;
             $time = $hours > 0
-                ? sprintf("%d:%02d:%02d", $hours, $minutes, $seconds)
-                : sprintf("%d:%02d", $minutes, $seconds);
-            if ($thumbStatus === 'ok' && isset($thumbFormatted->thumb->tags->tag->attributes()->category)) {
-                $category = (string)$thumbFormatted->thumb->tags->tag[(int)$thumbFormatted->thumb->tags->tag->attributes()->category - 1];
+                ? sprintf("%d:%02d:%02d", $time_hours, $time_minutes, $time_seconds)
+                : sprintf("%d:%02d", $time_minutes, $time_seconds);
+            if ($thumb_status === 'ok' && isset($thumb_formatted->thumb->tags->tag->attributes()->category)) {
+                $category = (string)$thumb_formatted->thumb->tags->tag[(int)$thumb_formatted->thumb->tags->tag->attributes()->category - 1];
             }
-            $reported = (string) $infoFormatted->nicovideo_video_response->video->options->{'@mobile'} === '1' ? true : false;
-            $uploaded = (string) $infoFormatted->nicovideo_video_response->video->first_retrieve;
+            $reported = (string) $info_formatted->nicovideo_video_response->video->options->{'@mobile'} === '1' ? true : false;
+            $uploaded = (string) $info_formatted->nicovideo_video_response->video->first_retrieve;
             return array(
                 "code" => 200,
                 "deleted" => $deleted,
                 "category" => $category,
                 "comment" => $comment,
                 "description" => $description,
-                "hours" => $hours,
                 "image" => $image,
                 "time" => $time,
+                "time_hours" => $time_hours,
+                "time_minutes" => $time_minutes,
+                "time_seconds" => $time_seconds,
                 "title" => $title,
-                "minutes" => $minutes,
-                "myList" => $myList,
+                "my_list" => $my_list,
                 "reported" => $reported,
-                "seconds" => $seconds,
                 "uploaded" => $uploaded,
-                "userNickname" => $userNickname,
-                "userId" => $userId,
-                "userImage" => $userImage,
-                "userSecret" => $userSecret,
+                "user_nickname" => $user_nickname,
+                "user_id" => $user_id,
+                "user_image" => $user_image,
+                "user_secret" => $user_secret,
                 "view" => $view
             );
         }
@@ -100,19 +100,19 @@ class info
         );
     }
 
-    private function saveDataToDB($videoId, $data) {
+    private function save_to_db($videoId, $data) {
         return null;
     }
 
-    public function getDataFromDB($videoId) {
+    private function get_from_db($videoId) {
         return null;
     }
 
-    public function getData($videoId) {
-        $data = $this->getDataFromDB($videoId);
+    public function get($id) {
+        $data = $this->get_from_db($videoId);
         if ($deta === null) {
-            $data = $this->getDataFromAPI($videoId);
-            $this->saveDataToDB($videoId, $data);
+            $data = $this->get_from_api($id);
+            $this->save_to_db($id, $data);
         }
         return $data;
     }

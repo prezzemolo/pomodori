@@ -3,21 +3,17 @@ namespace pomodori;
 
 class router
 {
-    private $url;
-    private $method = null;
-    private $param = null;
-
     /**
      * setParseUrl
      */
-    public function setParam($param) {
+    public function set_param($param) {
         list($this->url, $this->method, $this->param) = array(rtrim($param['url'], '/'), $param['method'], $param['param']);
     }
 
     /**
      * Parse URL
      */
-    public function parseUrl() {
+    public function parse() {
         /**
          * specific route
          */
@@ -48,32 +44,32 @@ class router
                 break;
 
             case $this->url === '/nicovideo/info':
-                $route = 'nicovideoInfo';
-                $element = array('videoId');
+                $route = 'nicovideo_info';
+                $element = array('id');
                 $method = 'GET';
                 break;
 
             case $this->url === '/base64/decode':
-                $route = 'base64Decode';
+                $route = 'base64_decode';
                 $element = array('string');
                 $method = 'POST';
                 break;
 
             case $this->url === '/base64/encode':
-                $route = 'base64Encode';
+                $route = 'base64_encode';
                 $element = array('string');
                 $method = 'POST';
                 break;
 
             default:
-                return array('notfound', null);
+                return array('not_found', null);
         }
 
         /**
          * check method
          */
         if ($this->method !== $method)
-            return array('invaildMethod', null);
+            return array('invaild_method', null);
 
         /**
          * assign param
@@ -83,9 +79,7 @@ class router
             $material = array_map(
                 function($name) use ($self){
                     return isset($self->param[$name]) ? $self->param[$name] : null;
-                },
-                $element
-            );
+                },$element);
             $param = array_combine($element, $material);
          }
 

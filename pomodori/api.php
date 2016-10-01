@@ -12,34 +12,18 @@ class api
         return;
     }
 
-    public function epoch() {
+    // special: client sent invaild method
+    public function invaild_method() {
         $this->default_header();
+        http_response_code(400);
         echo json_encode(array(
             'code' => http_response_code(),
-            'epoch' => time()
+            'detail' => 'please use vaild HTTTP method.'
         ));
-        return;
     }
 
-    public function iso8601() {
-        $this->default_header();
-        echo json_encode(array(
-            'code' => http_response_code(),
-            'iso8601' => date(DATE_ATOM)
-        ));
-        return;
-    }
-
-    public function remote() {
-        $this->default_header();
-        echo json_encode(array(
-            'code' => http_response_code(),
-            'remote' => isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
-        ));
-        return;
-    }
-
-    public function notfound() {
+    // special: not found
+    public function not_found() {
         $this->default_header();
         http_response_code(404);
         echo json_encode(array(
@@ -49,6 +33,47 @@ class api
         return;
     }
 
+    // special: index (URL not specified)
+    public function index() {
+        $this->default_header();
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'detail' => 'This is pomodori api server.'
+        ));
+        return;
+    }
+
+    // time/epoch ... Return server time formated Epoch
+    public function time_epoch() {
+        $this->default_header();
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'epoch' => time()
+        ));
+        return;
+    }
+
+    // time/iso8601 ... Return server time formated ISO8601
+    public function time_iso8601() {
+        $this->default_header();
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'iso8601' => date(DATE_ATOM)
+        ));
+        return;
+    }
+
+    // ip/remote ... Return remote IP address
+    public function ip_remote() {
+        $this->default_header();
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'remote' => isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
+        ));
+        return;
+    }
+
+    // meta ... Return server information
     public function meta() {
         $this->default_header();
         echo json_encode(array(
@@ -60,41 +85,34 @@ class api
         return;
     }
 
-    public function index() {
-        $this->default_header();
-        echo json_encode(array(
-            'code' => http_response_code(),
-            'detail' => 'This is pomodori api server.'
-        ));
-        return;
-    }
-
-    public function nicovideoInfo($param = null) {
+    // nicovideo/info ... Return niconico video information wrap nicovideo internal API
+    public function nicovideo_info($param = null) {
         $info = new nicovideo\info();
         $this->default_header();
-        if (!isset($param['videoId'])){
+        if (!isset($param['id'])){
             http_response_code(400);
             echo json_encode(array(
                 'code' => http_response_code(),
-                'detail' => 'please set GET videoId parameter.'
+                'detail' => 'please set GET id parameter.'
             ));
             return;
         }
-        if (!preg_match('/^(sm|so|nm|)([0-9]+)$/', $param['videoId'])){
+        if (!preg_match('/^(sm|so|nm|)([0-9]+)$/', $param['id'])){
             http_response_code(400);
             echo json_encode(array(
                 'code' => http_response_code(),
-                'detail' => 'please set valid nicovideo\'s videoId.'
+                'detail' => 'please set valid nicovideo\'s video ID.'
             ));
             return;
         }
-        $videoInfo = $info->getData($param['videoId']);
-        http_response_code($videoInfo['code']);
-        echo json_encode($videoInfo);
+        $video_info = $info->get($param['id']);
+        http_response_code($video_info['code']);
+        echo json_encode($video_info);
         return;
     }
 
-    public function base64Decode($param = null) {
+    // base64/decode ... return string decorded base64.
+    public function base64_decode($param = null) {
         $this->default_header();
         if (!isset($param['string'])){
             http_response_code(400);
@@ -105,7 +123,8 @@ class api
         }
     }
 
-    public function base64Encode($param = null) {
+    // base64/encode ... return string encorded base64.
+    public function base64_encode($param = null) {
         $this->default_header();
         if (!isset($param['string'])){
             http_response_code(400);
@@ -114,15 +133,6 @@ class api
                 'detail' => 'please set POST string parameter.'
             ));
         }
-    }
-
-    public function invaildMethod() {
-        $this->default_header();
-        http_response_code(400);
-        echo json_encode(array(
-            'code' => http_response_code(),
-            'detail' => 'please use vaild HTTTP method.'
-        ));
     }
 }
 ?>
