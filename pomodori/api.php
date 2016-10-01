@@ -120,7 +120,13 @@ class api
                 'code' => http_response_code(),
                 'detail' => 'please set POST string parameter.'
             ));
+            return;
         }
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'decorded' => base64_decode($param['string'])
+        ));
+        return;
     }
 
     // base64/encode ... return string encorded base64.
@@ -132,7 +138,13 @@ class api
                 'code' => http_response_code(),
                 'detail' => 'please set POST string parameter.'
             ));
+            return;
         }
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'encorded' => base64_encode($param['string'])
+        ));
+        return;
     }
 }
 ?>
