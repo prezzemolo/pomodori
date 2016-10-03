@@ -12,6 +12,10 @@ class api
         return;
     }
 
+    private function gen_uuid() {
+        return null;
+    }
+
     // special: client sent invaild method
     public function invaild_method() {
         $this->default_header();
@@ -143,6 +147,16 @@ class api
         echo json_encode(array(
             'code' => http_response_code(),
             'encorded' => base64_encode($param['string'])
+        ));
+        return;
+    }
+
+    // uuid/generate ... gen UUID ver4
+    public function uuid_generate() {
+        $this->default_header();
+        echo json_encode(array(
+            'code' => http_response_code(),
+            'uuid' => $this->gen_uuid()
         ));
         return;
     }
