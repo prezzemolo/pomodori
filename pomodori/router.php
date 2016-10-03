@@ -24,17 +24,17 @@ class router
                 break;
 
             case $this->url === '/time/epoch':
-                $route = 'epoch';
+                $route = 'time_epoch';
                 $method = 'GET';
                 break;
 
             case $this->url === '/time/iso8601':
-                $route = 'iso8601';
+                $route = 'time_iso8601';
                 $method = 'GET';
                 break;
 
             case $this->url === '/ip/remote':
-                $route = 'remote';
+                $route = 'ip_remote';
                 $method = 'GET';
                 break;
 
@@ -59,6 +59,11 @@ class router
                 $route = 'base64_encode';
                 $element = array('string');
                 $method = 'POST';
+                break;
+
+            case $this->url === '/uuid/generate':
+                $route = 'uuid_generate';
+                $method = 'GET';
                 break;
 
             default:
