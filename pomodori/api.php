@@ -6,14 +6,7 @@ class api
 {
     const version = 'v0.06';
 
-    private function cors () {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Request-Method: POST, GET');
-        return;
-    }
-
-    private function prefunction() {
-        $this->cors();
+    private function default_header() {
         header('Content-Type: application/json');
         header('X-Powered-By: pomodori api '.$this::version);
         return;
