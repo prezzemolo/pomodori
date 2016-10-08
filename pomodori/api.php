@@ -6,14 +6,37 @@ class api
 {
     const version = 'v0.06';
 
-    private function default_header() {
+    private function cors () {
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Request-Method: POST, GET');
+        return;
+    }
+
+    private function prefunction() {
+        $this->cors();
         header('Content-Type: application/json');
         header('X-Powered-By: pomodori api '.$this::version);
         return;
     }
 
+    // gen UUID v4
     private function gen_uuid() {
-        return null;
+        for ($i = 0x1; $i <= 0x20; $i++) {
+            switch (true) {
+                case $i === 0xD:
+                    $upperUUID .= '4';
+                    break;
+                case $i === 0x11:
+                    $upperUUID .= dechex(0b1000 + mt_rand(0b00, 0b11));
+                    break;
+                default:
+                    $upperUUID .= dechex(mt_rand(0x0, 0xF));
+            }
+            if ($i === 0x8 || $i === 0xC || $i === 0x10 || $i === 0x14) {
+                $upperUUID .= '-';
+            }
+        }
+        return strtolower($upperUUID);
     }
 
     // special: client sent invaild method
