@@ -6,12 +6,14 @@ class api
 {
     const version = 'v0.06';
 
-    private function preflight ($method) {
+    // CORS preflight
+    public function preflight ($method) {
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Request-Method: ' . $method);
         return;
     }
 
+    // preheader (internal use)
     private function pre() {
         header('Content-Type: application/json');
         header('X-Powered-By: pomodori api '.$this::version);
@@ -44,7 +46,7 @@ class api
         http_response_code(400);
         echo json_encode(array(
             'code' => http_response_code(),
-            'detail' => 'please use vaild HTTTP method.'
+            'detail' => 'please use vaild HTTP method.'
         ));
     }
 

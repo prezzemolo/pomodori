@@ -4,13 +4,13 @@ require_once __DIR__.'/pomodori/api.php';
 
 $router = new pomodori\router();
 $router->set_param(array(
-    'url' => isset($_SERVER['QUERY_STRING'])
-        ? str_replace('?'.$_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI'])
-        : $_SERVER['REQUEST_URI'],
-    'method' => $_SERVER['REQUEST_METHOD'],
-    'param' => $_REQUEST,
-    'cors' => isset($_SERVER['HTTP_Origin'])
-        ? isset($_SERVER['HTTP_Origin'])
+    isset($_SERVER['QUERY_STRING'])
+        ? rtrim(str_replace('?'.$_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']), '/')
+        : rtrim($_SERVER['REQUEST_URI'], '/'),
+    $_SERVER['REQUEST_METHOD'],
+    $_REQUEST,
+    isset($_SERVER['HTTP_ORIGIN'])
+        ? isset($_SERVER['HTTP_ORIGIN'])
         : null));
 list($route, $param) = $router->parse();
 

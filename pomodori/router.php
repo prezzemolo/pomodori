@@ -6,9 +6,8 @@ class router
     /**
      * setParseUrl
      */
-    public function set_param($param) {
-        list($this->url, $this->method, $this->param, $this->cors) = $param;
-        $this->url = rtrim($this->url, '/');
+    public function set_param($params) {
+        list($this->url, $this->method, $this->param, $this->cors) = $params;
     }
 
     /**
@@ -74,11 +73,13 @@ class router
         /**
          * check method
          */
-        if ($this->method === 'OPTIONS')
+        if ($this->method === 'OPTIONS') {
             return array('preflight', $method);
+        }
 
-        if ($this->method !== $method)
+        if ($this->method !== $method) {
             return array('invaild_method', null);
+        }
 
         /**
          * CORS check
