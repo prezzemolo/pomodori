@@ -7,7 +7,8 @@ class router
      * setParseUrl
      */
     public function set_param($param) {
-        list($this->url, $this->method, $this->param) = array(rtrim($param['url'], '/'), $param['method'], $param['param']);
+        list($this->url, $this->method, $this->param, $this->cors) = $param;
+        $this->url = rtrim($this->url, '/');
     }
 
     /**
@@ -73,8 +74,19 @@ class router
         /**
          * check method
          */
+        if ($this->method === 'OPTIONS')
+            return array('preflight', $method);
+
         if ($this->method !== $method)
             return array('invaild_method', null);
+
+        /**
+         * CORS check
+         */
+        if (isset ($this->cors)) {
+            header('Access-Control-Allow-Origin: *');
+            header('Access-Control-Request-Method: ' . $method);
+        }
 
         /**
          * assign param
