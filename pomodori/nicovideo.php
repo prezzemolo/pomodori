@@ -3,7 +3,49 @@ namespace pomodori\nicovideo;
 
 class info
 {
-    public function get_from_api($id) {
+    private function connection_db () {
+        try {
+            // connect
+            $this->db = new \PDO('sqlite:ndb.db');
+            // throw exception
+            $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            // change default fetch mode
+            $this->db->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+            // emulate off
+            $this->db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+
+            // create table
+            $this->db->exec("CREATE TABLE IF NOT EXISTS video(
+                code int,
+                id nchar(15) primary key,
+                deleted bit,
+                category nchar(30),
+                comment int,
+                description nchar(1000),
+                image nchar(100),
+                time nchar(100),
+                time_hours int,
+                time_minutes int,
+                time_seconds int,
+                title nchar(100),
+                my_list int,
+                reported bit,
+                updated_at nchar(30),
+                uploaded_at nchar(30),
+                user_nickname nchar(16),
+                user_id int,
+                user_image nchar(100),
+                user_secret bit,
+                view int
+            )");
+            return;
+        } catch (Exception $e) {
+            $this->db = null;
+            return;
+        }
+    }
+
+    private function get_from_api($id) {
         // default
         $category = null;
         $user_nickname = null;
@@ -11,6 +53,7 @@ class info
         $user_secret = true;
 
         // retrive api data
+        $updated_at = date(DATE_ATOM);
         $thumb_raw = file_get_contents('http://ext.nicovideo.jp/api/getthumbinfo/' . $id);
         $info_raw = file_get_contents('http://api.ce.nicovideo.jp/nicoapi/v1/video.info?__format=json&v=' . $id);
         $thumb_formatted = simplexml_load_string($thumb_raw);
@@ -70,9 +113,10 @@ class info
                 $category = (string)$thumb_formatted->thumb->tags->tag[(int)$thumb_formatted->thumb->tags->tag->attributes()->category - 1];
             }
             $reported = (string) $info_formatted->nicovideo_video_response->video->options->{'@mobile'} === '1' ? true : false;
-            $uploaded = (string) $info_formatted->nicovideo_video_response->video->first_retrieve;
+            $uploaded_at = (string) $info_formatted->nicovideo_video_response->video->first_retrieve;
             return array(
                 "code" => 200,
+                "id" => $id,
                 "deleted" => $deleted,
                 "category" => $category,
                 "comment" => $comment,
@@ -85,7 +129,8 @@ class info
                 "title" => $title,
                 "my_list" => $my_list,
                 "reported" => $reported,
-                "uploaded" => $uploaded,
+                "updated_at" => $updated_at,
+                "uploaded_at" => $uploaded_at,
                 "user_nickname" => $user_nickname,
                 "user_id" => $user_id,
                 "user_image" => $user_image,
@@ -100,19 +145,34 @@ class info
         );
     }
 
-    private function save_to_db($videoId, $data) {
-        return null;
+    private function save_to_db($data) {
+        if (!isset($this->db)) {
+            return;
+        }
+        $insert = $this->db->prepare("INSERT INTO video(code,id,deleted,category,comment,description,image,time,time_hours,time_minutes,time_seconds,title,my_list,reported,updated_at,uploaded_at,user_nickname,user_id,user_image,user_secret,view) VALUES (code,id,deleted,category,comment,description,image,time,time_hours,time_minutes,time_seconds,title,my_list,reported,updated_at,uploaded_at,user_nickname,user_id,user_image,user_secret,view)");
+        $insert->execute($data);
+        return;
     }
 
-    private function get_from_db($videoId) {
-        return null;
+    private function get_from_db($id) {
+        if (!isset($this->db)) {
+            return null;
+        }
+        $search = $this->db->prepare("SELECT * FROM video WHERE id = ?");
+        $search->execute([$id]);
+        $result = $search->fetch();
+        if ($result === false) {
+            return null;
+        }
+        return $result;
     }
 
     public function get($id) {
-        $data = $this->get_from_db($videoId);
+        $this->connection_db();
+        $data = $this->get_from_db($id);
         if ($deta === null) {
             $data = $this->get_from_api($id);
-            $this->save_to_db($id, $data);
+            $this->save_to_db($data);
         }
         return $data;
     }
