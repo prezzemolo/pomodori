@@ -16,8 +16,8 @@ class info
 
             // create table
             $this->db->exec("CREATE TABLE IF NOT EXISTS video(
-                code int,
                 id nchar(15) primary key,
+                code int,
                 deleted bit,
                 category nchar(30),
                 comment int,
@@ -116,7 +116,6 @@ class info
             $uploaded_at = (string) $info_formatted->nicovideo_video_response->video->first_retrieve;
             return array(
                 "code" => 200,
-                "id" => $id,
                 "deleted" => $deleted,
                 "category" => $category,
                 "comment" => $comment,
@@ -145,40 +144,19 @@ class info
         );
     }
 
-    private function save_to_db($data) {
+    private function save_to_db($id, $data) {
         if (!isset($this->db)) {
             return;
         }
         if ($data['code'] !== 200) {
             return;
         }
-        $keys = array(
-                ':code',
-                ':id',
-                ':deleted',
-                ':category',
-                ':comment',
-                ':description',
-                ':image',
-                ':time',
-                ':time_hours',
-                ':time_minutes',
-                ':time_seconds',
-                ':title',
-                ':my_list',
-                ':reported',
-                ':updated_at',
-                ':uploaded_at',
-                ':user_nickname',
-                ':user_id',
-                ':user_image',
-                ':user_secret',
-                ':view');
         $savedata = array_values($data);
+        array_unshift($savedata, $id);
         try {
             $sql = "INSERT INTO video (
-                code,
                 id,
+                code,
                 deleted,
                 category,
                 comment,
@@ -212,7 +190,28 @@ class info
             return null;
         }
         try {
-            $search = $this->db->prepare("SELECT * FROM video WHERE id = ?");
+            $search = $this->db->prepare("SELECT
+            code,
+            deleted,
+            category,
+            comment,
+            description,
+            image,
+            time,
+            time_hours,
+            time_minutes,
+            time_seconds,
+            title,
+            my_list,
+            reported,
+            updated_at,
+            uploaded_at,
+            user_nickname,
+            user_id,
+            user_image,
+            user_secret,
+            view
+            FROM video WHERE id = ?");
             $search->execute(array($id));
             $result = $search->fetch();
             if ($result === false) {
@@ -223,7 +222,7 @@ class info
         }
         $data = $result;
         // change to correct type (type casting)
-        $data['code'] = (int) $data['code'];
+        $data['code'] = 200;
         $data['deleted'] = (boolean) $data['deleted'];
         $data['comment'] = (int) $data['comment'];
         $data['time_hours'] = (int) $data['time_hours'];
@@ -242,7 +241,7 @@ class info
         $data = $this->get_from_db($id);
         if ($data === null) {
             $data = $this->get_from_api($id);
-            $this->save_to_db($data);
+            $this->save_to_db($id, $data);
         }
         return $data;
     }
