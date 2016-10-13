@@ -45,6 +45,98 @@ class info
         }
     }
 
+    private function save_to_db($id, $data) {
+        if (!isset($this->db)) {
+            return;
+        }
+        if ($data['code'] !== 200) {
+            return;
+        }
+        $savedata = array_values($data);
+        array_unshift($savedata, $id);
+        try {
+            $sql = "INSERT INTO video (
+                id,
+                code,
+                deleted,
+                category,
+                comment,
+                description,
+                image,
+                time,
+                time_hours,
+                time_minutes,
+                time_seconds,
+                title,
+                my_list,
+                reported,
+                updated_at,
+                uploaded_at,
+                user_nickname,
+                user_id,
+                user_image,
+                user_secret,
+                view
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $insert = $this->db->prepare($sql);
+            $insert->execute($savedata);
+        } catch (Exception $e) {
+            return;
+        }
+        return;
+    }
+
+    private function get_from_db($id) {
+        if (!isset($this->db)) {
+            return;
+        }
+        try {
+            $search = $this->db->prepare("SELECT
+            code,
+            deleted,
+            category,
+            comment,
+            description,
+            image,
+            time,
+            time_hours,
+            time_minutes,
+            time_seconds,
+            title,
+            my_list,
+            reported,
+            updated_at,
+            uploaded_at,
+            user_nickname,
+            user_id,
+            user_image,
+            user_secret,
+            view
+            FROM video WHERE id = ?");
+            $search->execute(array($id));
+            $result = $search->fetch();
+            if ($result === false) {
+                return;
+            }
+        } catch (Exception $e) {
+            return;
+        }
+        $data = $result;
+        // change to correct type (type casting)
+        $data['code'] = 200;
+        $data['deleted'] = (boolean) $data['deleted'];
+        $data['comment'] = (int) $data['comment'];
+        $data['time_hours'] = (int) $data['time_hours'];
+        $data['time_minutes'] = (int) $data['time_minutes'];
+        $data['time_seconds'] = (int) $data['time_seconds'];
+        $data['my_list'] = (int) $data['my_list'];
+        $data['reported'] = (boolean) $data['reported'];
+        $data['user_id'] = (int) $data['user_id'];
+        $data['user_secret'] = (boolean) $data['user_secret'];
+        $data['view'] = (int) $data['view'];
+        return $data;
+    }
+
     private function get_from_api($id) {
         // default
         $category = null;
@@ -144,102 +236,10 @@ class info
         );
     }
 
-    private function save_to_db($id, $data) {
-        if (!isset($this->db)) {
-            return;
-        }
-        if ($data['code'] !== 200) {
-            return;
-        }
-        $savedata = array_values($data);
-        array_unshift($savedata, $id);
-        try {
-            $sql = "INSERT INTO video (
-                id,
-                code,
-                deleted,
-                category,
-                comment,
-                description,
-                image,
-                time,
-                time_hours,
-                time_minutes,
-                time_seconds,
-                title,
-                my_list,
-                reported,
-                updated_at,
-                uploaded_at,
-                user_nickname,
-                user_id,
-                user_image,
-                user_secret,
-                view
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $insert = $this->db->prepare($sql);
-            $insert->execute($savedata);
-        } catch (Exception $e) {
-            return;
-        }
-        return;
-    }
-
-    private function get_from_db($id) {
-        if (!isset($this->db)) {
-            return null;
-        }
-        try {
-            $search = $this->db->prepare("SELECT
-            code,
-            deleted,
-            category,
-            comment,
-            description,
-            image,
-            time,
-            time_hours,
-            time_minutes,
-            time_seconds,
-            title,
-            my_list,
-            reported,
-            updated_at,
-            uploaded_at,
-            user_nickname,
-            user_id,
-            user_image,
-            user_secret,
-            view
-            FROM video WHERE id = ?");
-            $search->execute(array($id));
-            $result = $search->fetch();
-            if ($result === false) {
-                return null;
-            }
-        } catch (Exception $e) {
-            return null;
-        }
-        $data = $result;
-        // change to correct type (type casting)
-        $data['code'] = 200;
-        $data['deleted'] = (boolean) $data['deleted'];
-        $data['comment'] = (int) $data['comment'];
-        $data['time_hours'] = (int) $data['time_hours'];
-        $data['time_minutes'] = (int) $data['time_minutes'];
-        $data['time_seconds'] = (int) $data['time_seconds'];
-        $data['my_list'] = (int) $data['my_list'];
-        $data['reported'] = (boolean) $data['reported'];
-        $data['user_id'] = (int) $data['user_id'];
-        $data['user_secret'] = (boolean) $data['user_secret'];
-        $data['view'] = (int) $data['view'];
-        return $data;
-    }
-
     public function get($id) {
         $this->connection_db();
         $data = $this->get_from_db($id);
-        if ($data === null) {
+        if (!isset($data)) {
             $data = $this->get_from_api($id);
             $this->save_to_db($id, $data);
         }
