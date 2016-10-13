@@ -221,7 +221,20 @@ class info
         } catch (Exception $e) {
             return null;
         }
-        return $result;
+        $data = $result;
+        // change to correct type (type casting)
+        $data['code'] = (int) $data['code'];
+        $data['deleted'] = (boolean) $data['deleted'];
+        $data['comment'] = (int) $data['comment'];
+        $data['time_hours'] = (int) $data['time_hours'];
+        $data['time_minutes'] = (int) $data['time_minutes'];
+        $data['time_seconds'] = (int) $data['time_seconds'];
+        $data['my_list'] = (int) $data['my_list'];
+        $data['reported'] = (boolean) $data['reported'];
+        $data['user_id'] = (int) $data['user_id'];
+        $data['user_secret'] = (boolean) $data['user_secret'];
+        $data['view'] = (int) $data['view'];
+        return $data;
     }
 
     public function get($id) {
