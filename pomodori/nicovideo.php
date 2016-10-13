@@ -81,7 +81,7 @@ class info
                 user_image,
                 user_secret,
                 view
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $insert = $this->db->prepare($sql);
             $insert->execute($savedata);
             $this->db->query("VACUUM");
@@ -100,29 +100,29 @@ class info
         }
         unset($data['code']);
         $savedata = array_values($data);
-        array_unshift($savedata, $id);
+        array_push($savedata, $id);
         try {
             $sql = "UPDATE video SET
-                id = ?,
-                deleted = ?,
-                category = ?,
-                comment = ?,
-                description = ?,
-                image = ?,
-                time = ?,
-                time_hours = ?,
-                time_minutes = ?,
-                time_seconds = ?,
-                title = ?,
-                my_list = ?,
-                reported = ?,
-                updated_at = ?,
-                uploaded_at = ?,
-                user_nickname = ?,
-                user_id = ?,
-                user_image = ?,
-                user_secret = ?,
-                view  = ?";
+            deleted = ?,
+            category = ?,
+            comment = ?,
+            description = ?,
+            image = ?,
+            time = ?,
+            time_hours = ?,
+            time_minutes = ?,
+            time_seconds = ?,
+            title = ?,
+            my_list = ?,
+            reported = ?,
+            updated_at = ?,
+            uploaded_at = ?,
+            user_nickname = ?,
+            user_id = ?,
+            user_image = ?,
+            user_secret = ?,
+            view  = ?
+            WHERE id = ?";
             $update = $this->db->prepare($sql);
             $update->execute($savedata);
             $this->db->query("VACUUM");
@@ -168,7 +168,7 @@ class info
         }
         $data = $result;
         // change to correct type (type casting)
-        $data['code'] = 200;
+        $data = array('code' => 200) + $data;
         $data['deleted'] = (boolean) $data['deleted'];
         $data['comment'] = (int) $data['comment'];
         $data['time_hours'] = (int) $data['time_hours'];
@@ -285,10 +285,10 @@ class info
         $this->connection_db();
         $data = $this->get_from_db($id);
         // compare 10 minutes (60s * 10)
-        if (isset($data) && time() >= strtotime($data['updated_at']) + 60 * 15 ) {
-            //$data = $this->get_from_api($id);
+        if (isset($data) && time() >= strtotime($data['updated_at']) + 60 * 2 ) {
+            $data = $this->get_from_api($id);
             $this->db_update($id, $data);
-        } else {
+        } else if (!isset($data)) {
             $data = $this->get_from_api($id);
             $this->db_insert($id, $data);
         }
