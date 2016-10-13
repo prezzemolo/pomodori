@@ -45,6 +45,10 @@ class info
         }
     }
 
+    private function closing_db () {
+        $this->db = null;
+    }
+
     private function save_to_db($id, $data) {
         if (!isset($this->db)) {
             return;
@@ -80,6 +84,7 @@ class info
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $insert = $this->db->prepare($sql);
             $insert->execute($savedata);
+            $this->db->query("VACUUM");
         } catch (Exception $e) {
             return;
         }
@@ -243,6 +248,7 @@ class info
             $data = $this->get_from_api($id);
             $this->save_to_db($id, $data);
         }
+        $this->closing_db();
         return $data;
     }
 }
