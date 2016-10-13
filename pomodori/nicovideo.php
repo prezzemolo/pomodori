@@ -147,10 +147,10 @@ class info
 
     private function save_to_db($data) {
         if (!isset($this->db)) {
-            return false;
+            return;
         }
         if ($data['code'] !== 200) {
-            return false;
+            return;
         }
         $keys = array(
                 ':code',
@@ -202,9 +202,9 @@ class info
             $insert = $this->db->prepare($sql);
             $insert->execute($savedata);
         } catch (Exception $e) {
-            return false;
+            return;
         }
-        return true;
+        return;
     }
 
     private function get_from_db($id) {
