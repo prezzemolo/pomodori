@@ -285,7 +285,7 @@ class info
         $this->connection_db();
         $data = $this->get_from_db($id);
         // compare 10 minutes (60s * 10)
-        if (isset($data) && time() >= strtotime($data['updated_at']) + 60 * 2 ) {
+        if (isset($data) && time() >= strtotime($data['updated_at']) + 60 * 15 ) {
             $data = $this->get_from_api($id);
             $this->db_update($id, $data);
         } else if (!isset($data)) {
