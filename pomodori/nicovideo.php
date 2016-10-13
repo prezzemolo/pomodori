@@ -174,7 +174,7 @@ class info
                 ':user_image',
                 ':user_secret',
                 ':view');
-        $savedata = array_combine($keys, array_values($data));
+        $savedata = array_values($data);
         try {
             $sql = "INSERT INTO video (
                 code,
@@ -198,36 +198,11 @@ class info
                 user_image,
                 user_secret,
                 view
-            ) VALUES (
-                :code,
-                :id,
-                :deleted,
-                :category,
-                :comment,
-                :description,
-                :image,
-                :time,
-                :time_hours,
-                :time_minutes,
-                :time_seconds,
-                :title,
-                :my_list,
-                :reported,
-                :updated_at,
-                :uploaded_at,
-                :user_nickname,
-                :user_id,
-                :user_image,
-                :user_secret,
-                :view
-            )";
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $insert = $this->db->prepare($sql);
             $insert->execute($savedata);
-        } catch (PDOException $e) {
-            return array(
-                'message' => $e -> getMessage(),
-                'line' => $e -> getLine()
-            );
+        } catch (Exception $e) {
+            return false;
         }
         return true;
     }
@@ -236,10 +211,14 @@ class info
         if (!isset($this->db)) {
             return null;
         }
-        $search = $this->db->prepare("SELECT * FROM video WHERE id = ?");
-        $search->execute([$id]);
-        $result = $search->fetch();
-        if ($result === false) {
+        try {
+            $search = $this->db->prepare("SELECT * FROM video WHERE id = ?");
+            $search->execute(array($id));
+            $result = $search->fetch();
+            if ($result === false) {
+                return null;
+            }
+        } catch (Exception $e) {
             return null;
         }
         return $result;
@@ -248,11 +227,9 @@ class info
     public function get($id) {
         $this->connection_db();
         $data = $this->get_from_db($id);
-        if ($deta === null) {
+        if ($data === null) {
             $data = $this->get_from_api($id);
-            if ($this->save_to_db($data) === false && isset($this->PDOE)){
-                return $this->PDOE;
-            }
+            $this->save_to_db($data);
         }
         return $data;
     }
