@@ -38,7 +38,7 @@ class info
                 view int
             )");
             return;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db = null;
             return;
         }
@@ -86,7 +86,7 @@ class info
             $insert->execute($savedata);
             $this->db->query("VACUUM");
             return;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return;
         }
     }
@@ -127,7 +127,7 @@ class info
             $update->execute($savedata);
             $this->db->query("VACUUM");
             return;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return;
         }
     }
@@ -163,7 +163,7 @@ class info
             if ($result === false) {
                 return;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return;
         }
         $data = $result;
