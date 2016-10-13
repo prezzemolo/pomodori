@@ -6,7 +6,7 @@ class info
     private function connection_db () {
         try {
             // connect
-            $this->db = new \PDO("sqlite:".__DIR__. "/ndb.sqlite3");
+            $this->db = new \PDO("sqlite:".__DIR__. "/nicovideo.sqlite3");
             // throw exception
             $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             // change default fetch mode
