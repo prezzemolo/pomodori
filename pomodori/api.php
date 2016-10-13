@@ -4,7 +4,7 @@ require_once __DIR__.'/nicovideo.php';
 
 class api
 {
-    const version = 'v0.07';
+    const version = 'v0.08';
 
     // CORS preflight
     public function preflight ($method) {
