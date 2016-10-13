@@ -17,7 +17,6 @@ class info
             // create table
             $this->db->exec("CREATE TABLE IF NOT EXISTS video(
                 id nchar(15) primary key,
-                code int,
                 deleted bit,
                 category nchar(30),
                 comment int,
@@ -47,21 +46,22 @@ class info
 
     private function closing_db () {
         $this->db = null;
+        return;
     }
 
-    private function save_to_db($id, $data) {
+    private function db_insert ($id, $data) {
         if (!isset($this->db)) {
             return;
         }
         if ($data['code'] !== 200) {
             return;
         }
+        unset($data['code']);
         $savedata = array_values($data);
         array_unshift($savedata, $id);
         try {
             $sql = "INSERT INTO video (
                 id,
-                code,
                 deleted,
                 category,
                 comment,
@@ -85,10 +85,51 @@ class info
             $insert = $this->db->prepare($sql);
             $insert->execute($savedata);
             $this->db->query("VACUUM");
+            return;
         } catch (Exception $e) {
             return;
         }
-        return;
+    }
+
+    private function db_update ($id, $data) {
+        if (!isset($this->db)) {
+            return;
+        }
+        if ($data['code'] !== 200) {
+            return;
+        }
+        unset($data['code']);
+        $savedata = array_values($data);
+        array_unshift($savedata, $id);
+        try {
+            $sql = "UPDATE video SET
+                id = ?,
+                deleted = ?,
+                category = ?,
+                comment = ?,
+                description = ?,
+                image = ?,
+                time = ?,
+                time_hours = ?,
+                time_minutes = ?,
+                time_seconds = ?,
+                title = ?,
+                my_list = ?,
+                reported = ?,
+                updated_at = ?,
+                uploaded_at = ?,
+                user_nickname = ?,
+                user_id = ?,
+                user_image = ?,
+                user_secret = ?,
+                view  = ?";
+            $update = $this->db->prepare($sql);
+            $update->execute($savedata);
+            $this->db->query("VACUUM");
+            return;
+        } catch (Exception $e) {
+            return;
+        }
     }
 
     private function get_from_db($id) {
@@ -97,7 +138,6 @@ class info
         }
         try {
             $search = $this->db->prepare("SELECT
-            code,
             deleted,
             category,
             comment,
@@ -244,9 +284,13 @@ class info
     public function get($id) {
         $this->connection_db();
         $data = $this->get_from_db($id);
-        if (!isset($data)) {
+        // compare 10 minutes (60s * 10)
+        if (isset($data) && time() >= strtotime($data['updated_at']) + 60 * 15 ) {
+            //$data = $this->get_from_api($id);
+            $this->db_update($id, $data);
+        } else {
             $data = $this->get_from_api($id);
-            $this->save_to_db($id, $data);
+            $this->db_insert($id, $data);
         }
         $this->closing_db();
         return $data;
