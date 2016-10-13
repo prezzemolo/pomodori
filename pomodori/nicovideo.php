@@ -6,7 +6,7 @@ class info
     private function connection_db () {
         try {
             // connect
-            $this->db = new \PDO('sqlite:ndb.db');
+            $this->db = new \PDO("sqlite:__DIR__/../ndb.db");
             // throw exception
             $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             // change default fetch mode
@@ -147,11 +147,89 @@ class info
 
     private function save_to_db($data) {
         if (!isset($this->db)) {
-            return;
+            return false;
         }
-        $insert = $this->db->prepare("INSERT INTO video(code,id,deleted,category,comment,description,image,time,time_hours,time_minutes,time_seconds,title,my_list,reported,updated_at,uploaded_at,user_nickname,user_id,user_image,user_secret,view) VALUES (code,id,deleted,category,comment,description,image,time,time_hours,time_minutes,time_seconds,title,my_list,reported,updated_at,uploaded_at,user_nickname,user_id,user_image,user_secret,view)");
-        $insert->execute($data);
-        return;
+        if ($data['code'] !== 200) {
+            return false;
+        }
+        $keys = array(
+                ':code',
+                ':id',
+                ':deleted',
+                ':category',
+                ':comment',
+                ':description',
+                ':image',
+                ':time',
+                ':time_hours',
+                ':time_minutes',
+                ':time_seconds',
+                ':title',
+                ':my_list',
+                ':reported',
+                ':updated_at',
+                ':uploaded_at',
+                ':user_nickname',
+                ':user_id',
+                ':user_image',
+                ':user_secret',
+                ':view');
+        $savedata = array_combine($keys, array_values($data));
+        try {
+            $sql = "INSERT INTO video (
+                code,
+                id,
+                deleted,
+                category,
+                comment,
+                description,
+                image,
+                time,
+                time_hours,
+                time_minutes,
+                time_seconds,
+                title,
+                my_list,
+                reported,
+                updated_at,
+                uploaded_at,
+                user_nickname,
+                user_id,
+                user_image,
+                user_secret,
+                view
+            ) VALUES (
+                :code,
+                :id,
+                :deleted,
+                :category,
+                :comment,
+                :description,
+                :image,
+                :time,
+                :time_hours,
+                :time_minutes,
+                :time_seconds,
+                :title,
+                :my_list,
+                :reported,
+                :updated_at,
+                :uploaded_at,
+                :user_nickname,
+                :user_id,
+                :user_image,
+                :user_secret,
+                :view
+            )";
+            $insert = $this->db->prepare($sql);
+            $insert->execute($savedata);
+        } catch (PDOException $e) {
+            return array(
+                'message' => $e -> getMessage(),
+                'line' => $e -> getLine()
+            );
+        }
+        return true;
     }
 
     private function get_from_db($id) {
@@ -172,7 +250,9 @@ class info
         $data = $this->get_from_db($id);
         if ($deta === null) {
             $data = $this->get_from_api($id);
-            $this->save_to_db($data);
+            if ($this->save_to_db($data) === false && isset($this->PDOE)){
+                return $this->PDOE;
+            }
         }
         return $data;
     }
