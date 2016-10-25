@@ -10,7 +10,7 @@ $router->set_param(array(
     $_SERVER['REQUEST_METHOD'],
     $_REQUEST,
     isset($_SERVER['HTTP_ORIGIN'])
-        ? isset($_SERVER['HTTP_ORIGIN'])
+        ? $_SERVER['HTTP_ORIGIN']
         : null));
 list($route, $param) = $router->parse();
 
