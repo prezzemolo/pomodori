@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__.'/pomodori/router.php';
-require_once __DIR__.'/pomodori/api.php';
+require_once __DIR__.'/router.php';
+require_once __DIR__.'/api.php';
 
 $router = new pomodori\router();
 $router->set_param(array(

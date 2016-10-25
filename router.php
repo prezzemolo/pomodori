@@ -94,10 +94,9 @@ class router
          */
         if (isset($element)) {
             $self = $this;
-            $material = array_map(
-                function($name) use ($self){
-                    return isset($self->param[$name]) ? $self->param[$name] : null;
-                },$element);
+            $material = array_map(function ($name) use ($self){
+                return isset($self->param[$name]) ? $self->param[$name] : null;
+            },$element);
             $param = array_combine($element, $material);
          }
 
